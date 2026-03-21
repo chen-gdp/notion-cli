@@ -1,9 +1,6 @@
 """Tests for the skills registry module."""
 
 from pathlib import Path
-from unittest.mock import MagicMock, patch
-
-import pytest
 
 from notion_cli.core.skills_registry import (
     SkillRegistry,

@@ -2,9 +2,8 @@
 
 import json
 from pathlib import Path
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 
-import pytest
 from typer.testing import CliRunner
 
 from notion_cli.cli import app
@@ -59,13 +58,15 @@ class TestAuthCommands:
         """
         config_file = tmp_path / ".config" / "notion-cli" / "config.json"
 
-        with patch.object(Path, "home", return_value=tmp_path):
-            with patch("rich.prompt.Prompt.ask", return_value="secret_valid_token_123"):
-                result = runner.invoke(app, ["auth", "setup"])
+        with (
+            patch.object(Path, "home", return_value=tmp_path),
+            patch("rich.prompt.Prompt.ask", return_value="secret_valid_token_123"),
+        ):
+            result = runner.invoke(app, ["auth", "setup"])
 
-                assert result.exit_code == 0
-                assert "saved successfully" in result.output
-                assert config_file.exists()
+            assert result.exit_code == 0
+            assert "saved successfully" in result.output
+            assert config_file.exists()
 
     def test_auth_logout_removes_token(self, tmp_path: Path):
         """

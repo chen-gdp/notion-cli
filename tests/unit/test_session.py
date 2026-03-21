@@ -1,7 +1,7 @@
 """Tests for the session module with mocked ultimate_notion."""
 
 import os
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 
 import pytest
 
@@ -25,12 +25,14 @@ class TestNotionSession:
         Condition: No token in env var or config.
         Expected: Raises AuthError with helpful message.
         """
-        with patch.dict(os.environ, {}, clear=True):
-            with patch.object(Config, "get_token", return_value=None):
-                with pytest.raises(AuthError) as exc_info:
-                    NotionSession.get()
+        with (
+            patch.dict(os.environ, {}, clear=True),
+            patch.object(Config, "get_token", return_value=None),
+        ):
+            with pytest.raises(AuthError) as exc_info:
+                NotionSession.get()
 
-                assert "notion auth setup" in str(exc_info.value).lower()
+            assert "notion auth setup" in str(exc_info.value).lower()
 
     def test_get_session_creates_session_with_token(self, mock_notion_session):
         """
@@ -85,9 +87,11 @@ class TestNotionSession:
         Condition: No token available.
         Expected: Returns False.
         """
-        with patch.dict(os.environ, {}, clear=True):
-            with patch.object(Config, "get_token", return_value=None):
-                assert NotionSession.is_authenticated() is False
+        with (
+            patch.dict(os.environ, {}, clear=True),
+            patch.object(Config, "get_token", return_value=None),
+        ):
+            assert NotionSession.is_authenticated() is False
 
 
 class TestGetSession:
@@ -122,6 +126,8 @@ class TestCheckAuth:
         Condition: No token.
         Expected: Returns False.
         """
-        with patch.dict(os.environ, {}, clear=True):
-            with patch.object(Config, "get_token", return_value=None):
-                assert check_auth() is False
+        with (
+            patch.dict(os.environ, {}, clear=True),
+            patch.object(Config, "get_token", return_value=None),
+        ):
+            assert check_auth() is False

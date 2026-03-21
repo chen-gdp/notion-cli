@@ -1,7 +1,5 @@
 """Page commands for notion-cli."""
 
-from typing import Optional
-
 import typer
 from rich.console import Console
 
@@ -17,7 +15,7 @@ app = typer.Typer()
 def page_create(
     parent: str = typer.Option(..., "--parent", help="Parent page/database ID"),
     title: str = typer.Option(..., "--title", help="Page title"),
-    properties: Optional[str] = typer.Option(None, "--properties", help="Properties for database entries"),
+    properties: str | None = typer.Option(None, "--properties", help="Properties for database entries"),
     json: bool = typer.Option(False, "--json", help="Output as JSON"),
 ):
     """Create a new page."""
@@ -90,8 +88,8 @@ def page_append(
 @app.command("update")
 def page_update(
     page_id: str = typer.Argument(..., help="Page ID"),
-    title: Optional[str] = typer.Option(None, "--title", help="New title"),
-    properties: Optional[str] = typer.Option(None, "--properties", help="Properties to update"),
+    title: str | None = typer.Option(None, "--title", help="New title"),
+    properties: str | None = typer.Option(None, "--properties", help="Properties to update"),
     json: bool = typer.Option(False, "--json", help="Output as JSON"),
 ):
     """Update page properties."""

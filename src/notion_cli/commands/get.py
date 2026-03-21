@@ -1,11 +1,9 @@
 """Get command for notion-cli."""
 
-from typing import Optional
-
 import typer
 from rich.console import Console
 
-from notion_cli.core.output import output_error, output_json, output_table
+from notion_cli.core.output import output_error, output_json
 from notion_cli.core.session import get_session
 
 console = Console()

@@ -1,7 +1,5 @@
 """Database commands for notion-cli."""
 
-from typing import Optional
-
 import typer
 from rich.console import Console
 
@@ -45,7 +43,7 @@ def db_get(
 @app.command("query")
 def db_query(
     database_id: str = typer.Argument(..., help="Database ID"),
-    filter: Optional[str] = typer.Option(None, "--filter", help="Filter criteria (key=value,key2=value2)"),
+    filter: str | None = typer.Option(None, "--filter", help="Filter criteria (key=value,key2=value2)"),
     limit: int = typer.Option(100, "--limit", help="Maximum results"),
     json: bool = typer.Option(False, "--json", help="Output as JSON"),
 ):
@@ -89,7 +87,7 @@ def db_query(
 def db_insert(
     database_id: str = typer.Argument(..., help="Database ID"),
     title: str = typer.Option(..., "--title", help="Entry title"),
-    properties: Optional[str] = typer.Option(None, "--properties", help="Properties (key=value,key2=value2)"),
+    properties: str | None = typer.Option(None, "--properties", help="Properties (key=value,key2=value2)"),
     json: bool = typer.Option(False, "--json", help="Output as JSON"),
 ):
     """Insert a new entry into database."""

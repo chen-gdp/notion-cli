@@ -9,9 +9,9 @@ These tests cover real-world use cases:
 Run with: NOTION_TOKEN=xxx pytest tests/integration/test_complete_workflow.py -v
 """
 
+import contextlib
 import json
 import os
-import uuid
 from datetime import datetime
 
 import pytest
@@ -83,7 +83,7 @@ class TestTaskManagementWorkflow:
                 "--title",
                 task_title,
                 "--properties",
-                f"Status=Not started,Priority=High",
+                "Status=Not started,Priority=High",
                 "--json",
             ],
         )
@@ -412,7 +412,5 @@ class TestCleanup:
 
         for resource_id in resources_to_cleanup:
             if resource_id:
-                try:
+                with contextlib.suppress(Exception):
                     runner.invoke(app, ["page", "archive", resource_id, "--json"])
-                except Exception:
-                    pass  # Ignore cleanup errors

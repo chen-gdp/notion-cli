@@ -7,8 +7,6 @@ from registered CLI commands.
 from pathlib import Path
 from typing import Any
 
-import typer
-
 
 class SkillRegistry:
     """Registry for CLI skills/commands.

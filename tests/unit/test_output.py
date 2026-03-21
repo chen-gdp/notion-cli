@@ -1,13 +1,8 @@
 """Tests for the output module."""
 
 import json
-import sys
-from io import StringIO
-from unittest.mock import MagicMock, patch
 
 import pytest
-from rich.console import Console
-from rich.table import Table
 
 from notion_cli.core.output import output_error, output_json, output_table
 

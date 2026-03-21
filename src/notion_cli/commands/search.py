@@ -1,7 +1,5 @@
 """Search command for notion-cli."""
 
-from typing import Optional
-
 import typer
 from rich.console import Console
 
@@ -15,7 +13,7 @@ app = typer.Typer()
 @app.command()
 def search(
     query: str = typer.Argument(..., help="Search query"),
-    type: Optional[str] = typer.Option(None, "--type", help="Filter by type: page or database"),
+    type: str | None = typer.Option(None, "--type", help="Filter by type: page or database"),
     limit: int = typer.Option(100, "--limit", help="Maximum results"),
     json: bool = typer.Option(False, "--json", help="Output as JSON"),
 ):

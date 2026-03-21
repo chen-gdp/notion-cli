@@ -1,7 +1,5 @@
 """Tests for the errors module."""
 
-import pytest
-
 from notion_cli.core.errors import (
     AuthError,
     NotFoundError,

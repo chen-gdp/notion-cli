@@ -1,7 +1,5 @@
 """Tests for the markdown parser module."""
 
-import pytest
-
 from notion_cli.core.markdown import parse_markdown
 
 

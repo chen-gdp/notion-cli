@@ -1,10 +1,8 @@
 """Main CLI entry point for notion-cli."""
 
 import typer
-from typing import Optional
 
 from notion_cli.commands import auth, database, get, page, search, skills
-from notion_cli.core.output import output_error
 
 app = typer.Typer(
     name="notion",
