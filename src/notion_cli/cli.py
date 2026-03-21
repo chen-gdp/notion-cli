@@ -1,0 +1,36 @@
+"""Main CLI entry point for notion-cli."""
+
+import typer
+from typing import Optional
+
+from notion_cli.commands import auth, database, get, page, search, skills
+from notion_cli.core.output import output_error
+
+app = typer.Typer(
+    name="notion",
+    help="Notion CLI for AI agents",
+    no_args_is_help=True,
+)
+
+# Add subcommands
+app.add_typer(auth.app, name="auth")
+app.add_typer(database.app, name="db")
+app.add_typer(get.app, name="get")
+app.add_typer(page.app, name="page")
+app.add_typer(search.app, name="search")
+app.add_typer(skills.app, name="skills")
+
+
+@app.callback()
+def main(
+    json: bool = typer.Option(False, "--json", help="Output as JSON"),
+    version: bool = typer.Option(False, "--version", help="Show version"),
+):
+    """Notion CLI - Interact with Notion from the command line."""
+    if version:
+        typer.echo("notion-cli 0.1.0")
+        raise typer.Exit()
+
+
+if __name__ == "__main__":
+    app()
