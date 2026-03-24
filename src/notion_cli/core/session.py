@@ -39,8 +39,9 @@ class NotionSession:
                     "No Notion token found. Run 'notion auth setup' or set NOTION_TOKEN environment variable."
                 )
 
-            # Create ultimate_notion config (loads from env automatically)
+            # Create ultimate_notion config and set the token
             cfg = get_or_create_cfg()
+            cfg.token = token
             cls._instance = Session(cfg)
         return cls._instance
 
