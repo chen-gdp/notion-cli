@@ -318,12 +318,238 @@ class TestCompleteWorkflow:
         assert archive_data["success"] is True
 
 
+class TestListCommands:
+    """Test list (ls) command."""
+
+    def test_ls_returns_valid_structure(self):
+        """Test that ls returns expected JSON structure."""
+        result = subprocess.run(
+            ["notion", "ls", "--json"],
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+
+        assert result.returncode == 0, f"Command failed: {result.stderr}"
+
+        data = json.loads(result.stdout)
+        assert "success" in data
+        assert data["success"] is True
+        assert "data" in data
+        assert isinstance(data["data"], list)
+
+    def test_ls_with_type_filter(self):
+        """Test ls with --type filter."""
+        # List only pages
+        result = subprocess.run(
+            ["notion", "ls", "--type", "page", "--json"],
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+
+        assert result.returncode == 0, f"Command failed: {result.stderr}"
+
+        data = json.loads(result.stdout)
+        assert data["success"] is True
+
+        # All results should be pages if any exist
+        for item in data["data"]:
+            assert item["type"] == "page"
+
+
+class TestAuthSetupCommand:
+    """Test auth setup command."""
+
+    def test_auth_setup_with_token(self):
+        """Test auth setup with --token flag."""
+        # Get existing token
+        token = os.environ.get("NOTION_TOKEN", "")
+        if not token:
+            pytest.skip("NOTION_TOKEN not set")
+
+        result = subprocess.run(
+            ["notion", "auth", "setup", "--token", token, "--json"],
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+
+        assert result.returncode == 0, f"Command failed: {result.stderr}"
+
+        data = json.loads(result.stdout)
+        assert data["success"] is True
+
+    def test_auth_logout(self):
+        """Test auth logout command."""
+        result = subprocess.run(
+            ["notion", "auth", "logout"],
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+
+        # Should succeed (no json output for logout)
+        assert result.returncode == 0
+
+        # Restore token for other tests
+        token = os.environ.get("NOTION_TOKEN", "")
+        if token:
+            subprocess.run(
+                ["notion", "auth", "setup", "--token", token],
+                capture_output=True,
+                check=False,
+            )
+
+
+class TestPageUpdateCommand:
+    """Test page update command."""
+
+    def test_page_update_title(self, existing_page_id):
+        """Test updating page title."""
+        result = subprocess.run(
+            [
+                "notion",
+                "page",
+                "update",
+                existing_page_id,
+                "--title",
+                "Updated Title for Test",
+                "--json",
+            ],
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+
+        assert result.returncode == 0, f"Command failed: {result.stderr}"
+
+        data = json.loads(result.stdout)
+        assert data["success"] is True
+
+    def test_page_update_properties(self, existing_database_id):
+        """Test updating page properties."""
+        # First create a page in database
+        create_result = subprocess.run(
+            [
+                "notion",
+                "page",
+                "create",
+                "--parent",
+                existing_database_id,
+                "--title",
+                "Test Page for Update",
+                "--json",
+            ],
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+
+        if create_result.returncode != 0:
+            pytest.skip("Could not create test page")
+
+        create_data = json.loads(create_result.stdout)
+        page_id = create_data["data"]["id"]
+
+        subprocess.run(
+            [
+                "notion",
+                "page",
+                "update",
+                page_id,
+                "--properties",
+                "Status=Done",
+                "--json",
+            ],
+            capture_output=True,
+            check=False,
+        )
+
+        # Clean up
+        subprocess.run(
+            ["notion", "page", "archive", page_id, "--json"],
+            capture_output=True,
+            check=False,
+        )
+
+
+class TestDbInsertCommand:
+    """Test database insert command."""
+
+    def test_db_insert_creates_entry(self, existing_database_id):
+        """Test inserting a new entry into database."""
+        result = subprocess.run(
+            [
+                "notion",
+                "db",
+                "insert",
+                existing_database_id,
+                "--title",
+                "Test Entry from Integration Test",
+                "--json",
+            ],
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+
+        assert result.returncode == 0, f"Command failed: {result.stderr}"
+
+        data = json.loads(result.stdout)
+        assert data["success"] is True
+        assert "id" in data["data"]
+
+        # Clean up: archive the created entry
+        entry_id = data["data"]["id"]
+        subprocess.run(
+            ["notion", "page", "archive", entry_id, "--json"],
+            capture_output=True,
+            check=False,
+        )
+
+
+class TestSkillsShowCommand:
+    """Test skills show command."""
+
+    def test_skills_show_search(self):
+        """Test showing details for search skill."""
+        result = subprocess.run(
+            ["notion", "skills", "show", "search", "--json"],
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+
+        assert result.returncode == 0, f"Command failed: {result.stderr}"
+
+        data = json.loads(result.stdout)
+        assert data["success"] is True
+        assert "name" in data["data"]
+        assert data["data"]["name"] == "search"
+
+    def test_skills_show_db_query(self):
+        """Test showing details for db_query skill."""
+        result = subprocess.run(
+            ["notion", "skills", "show", "db_query", "--json"],
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+
+        assert result.returncode == 0, f"Command failed: {result.stderr}"
+
+        data = json.loads(result.stdout)
+        assert data["success"] is True
+        assert data["data"]["name"] == "db_query"
+
+
 # Fixtures
 @pytest.fixture
 def existing_page_id():
     """Get an existing page ID for testing."""
     result = subprocess.run(
-        ["notion", "search", "", "--type", "page", "--limit", "1", "--json"],
+        ["notion", "ls", "--type", "page", "--limit", "1", "--json"],
         capture_output=True,
         text=True,
         check=False,
@@ -343,7 +569,7 @@ def existing_page_id():
 def existing_database_id():
     """Get an existing database ID for testing."""
     result = subprocess.run(
-        ["notion", "search", "", "--type", "database", "--limit", "1", "--json"],
+        ["notion", "ls", "--type", "database", "--limit", "1", "--json"],
         capture_output=True,
         text=True,
         check=False,
