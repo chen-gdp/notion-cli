@@ -20,15 +20,20 @@ def search(
     """Search for pages and databases in Notion."""
     try:
         session = get_session()
-        results = session.search(query)
 
-        # Filter by type if specified
-        if type:
-            type_lower = type.lower()
-            results = [r for r in results if r.object == type_lower]
+        # Use appropriate search method based on type filter
+        if type == "database":
+            raw_results = session.search_db(query, exact=False)
+        elif type == "page":
+            raw_results = session.search_page(query, exact=False)
+        else:
+            # Search both and combine
+            db_results = session.search_db(query, exact=False)
+            page_results = session.search_page(query, exact=False)
+            raw_results = list(db_results) + list(page_results)
 
         # Limit results
-        results = results[:limit]
+        raw_results = raw_results[:limit]
 
         # Format output
         formatted = [
@@ -39,7 +44,7 @@ def search(
                 "url": r.url,
                 "last_edited_time": r.last_edited_time.isoformat() if r.last_edited_time else None,
             }
-            for r in results
+            for r in raw_results
         ]
 
         if json:
