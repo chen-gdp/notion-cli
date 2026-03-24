@@ -12,16 +12,41 @@ A command-line interface for Notion, designed for AI agents and power users. Bui
 - **Self-Documenting**: Auto-generated SKILLS.md for easy agent discovery
 - **Authentication**: Flexible token management via environment variables or config files
 
-## Installation
+## Quick Install (Recommended)
+
+One-command setup with interactive wizard:
 
 ```bash
-pip install git+https://github.com/chen-gdp/notion-cli.git
+curl -fsSL https://raw.githubusercontent.com/chen-gdp/notion-cli/main/setup.sh | bash
 ```
 
-Or install with uv (recommended for development):
+This will:
+1. ✅ Check prerequisites (Python 3.10+, pip)
+2. 📦 Install notion-cli
+3. 🔐 Guide you through Notion authentication
+4. 🧪 Test the connection
+5. 🤖 Optionally install OpenCode skill
+
+## Manual Installation
 
 ```bash
-uv pip install git+https://github.com/chen-gdp/notion-cli.git
+pip install notion-cli
+```
+
+Or with uv:
+
+```bash
+uv pip install notion-cli
+```
+
+### Manual Authentication
+
+```bash
+# Set token via environment variable
+export NOTION_TOKEN="secret_xxxxxxxxxxxxx"
+
+# Or use interactive setup
+notion auth setup
 ```
 
 ## OpenCode Skill Installation
@@ -30,30 +55,54 @@ Enable OpenCode to discover and use notion-cli commands.
 
 ### For Humans
 
+**Option 1: Use the setup wizard (recommended)**
+
+Copy and paste this to your terminal:
+```bash
+curl -fsSL https://raw.githubusercontent.com/chen-gdp/notion-cli/main/setup.sh | bash
+```
+
+Or tell your LLM agent:
+> Install notion-cli for me using the setup wizard at https://raw.githubusercontent.com/chen-gdp/notion-cli/main/setup.sh
+
+**Option 2: Quick manual install**
+
 Copy and paste this prompt to your LLM agent (OpenCode, Claude Code, Cursor, etc.):
 
 > Install the notion-cli skill for me by cloning https://github.com/chen-gdp/notion-cli.git to ~/.config/opencode/skills/notion-cli
 
-Or do it manually:
-```bash
-git clone git@github.com:chen-gdp/notion-cli.git ~/.config/opencode/skills/notion-cli
-```
-
 ### For LLM Agents
 
-You are helping install the notion-cli skill for OpenCode.
+**Method 1: Use the interactive setup wizard (recommended)**
+
+Run the setup wizard for the user - it will install notion-cli, set up authentication, and optionally install the OpenCode skill:
+```bash
+curl -fsSL https://raw.githubusercontent.com/chen-gdp/notion-cli/main/setup.sh | bash
+```
+
+**Method 2: Manual installation**
 
 1. Clone the repository to the OpenCode skills directory:
    ```bash
    git clone git@github.com:chen-gdp/notion-cli.git ~/.config/opencode/skills/notion-cli
    ```
 
-2. Verify the skill is installed:
+2. Install the CLI:
+   ```bash
+   pip install notion-cli
+   ```
+
+3. Set up authentication (if not already done):
+   ```bash
+   notion auth setup
+   ```
+
+4. Verify the skill is installed:
    ```bash
    opencode debug skill | grep notion-cli
    ```
 
-3. Report success to the user and suggest trying:
+5. Report success to the user and suggest trying:
    - `notion skills list` to see available commands
    - `notion search "Tasks" --type database` to find their tasks database
    - `notion auth setup` if they haven't configured their Notion token yet
