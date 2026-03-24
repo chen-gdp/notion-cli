@@ -8,6 +8,7 @@ Command-line interface for Notion, designed for AI agents and power users.
 |---------|-------------|----------|
 | `notion auth setup` | Configure authentication | First time setup |
 | `notion auth status` | Check authentication | Troubleshooting |
+| `notion ls` | List all pages/databases | Discovery without query |
 | `notion search <query>` | Find pages/databases | Looking for content |
 | `notion get <id>` | Get page/database details | Need full object |
 | `notion db get <id>` | Get database schema | Need property types |

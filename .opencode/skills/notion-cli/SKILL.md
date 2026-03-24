@@ -10,7 +10,10 @@ Interact with your Notion workspace from the terminal. Designed for AI agents an
 ## Prerequisites
 
 - `notion` CLI installed: `pip install notion-cli`
-- `NOTION_TOKEN` environment variable set, or run `notion auth setup`
+- Token configured via one of:
+  - `NOTION_TOKEN` environment variable
+  - `.env` file with `NOTION_TOKEN="..."`
+  - `notion auth setup`
 
 ## Quick Start
 
@@ -37,6 +40,9 @@ notion page create --parent "$DB_ID" --title "New Task" --json
 - `notion auth logout` - Remove token
 
 ### Search & Discovery
+- `notion ls` - List all pages and databases
+- `notion ls --type page` - List only pages
+- `notion ls --type database` - List only databases
 - `notion search <query>` - Find pages and databases
 - `notion search <query> --type database` - Search only databases
 - `notion search <query> --type page` - Search only pages

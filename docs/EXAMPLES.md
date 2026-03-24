@@ -41,6 +41,14 @@ notion auth status --json
 
 ## Finding Content
 
+### List all content (no search query needed)
+
+```bash
+notion ls              # List everything
+notion ls --type page  # List only pages
+notion ls --type database  # List only databases
+```
+
 ### Search everything
 
 ```bash

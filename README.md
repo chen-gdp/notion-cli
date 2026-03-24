@@ -118,13 +118,19 @@ opencode debug skill | grep notion-cli
 
 ### 1. Authenticate
 
-Set your Notion token as an environment variable:
+**Option A: Set token as environment variable**
 
 ```bash
 export NOTION_TOKEN="secret_xxxxxxxxxxxxx"
 ```
 
-Or configure via the CLI:
+**Option B: Create a .env file (recommended)**
+
+```bash
+echo 'NOTION_TOKEN="secret_xxxxxxxxxxxxx"' > .env
+```
+
+**Option C: Configure via CLI**
 
 ```bash
 notion auth setup
@@ -140,6 +146,9 @@ notion auth status
 ### 3. Start Using
 
 ```bash
+# List all pages and databases
+notion ls
+
 # Search for pages and databases
 notion search "meeting"
 

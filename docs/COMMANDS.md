@@ -6,6 +6,7 @@ Complete reference for all Notion CLI commands.
 
 - [Authentication](#authentication)
 - [Search & Discovery](#search--discovery)
+- [List](#list)
 - [Database Operations](#database-operations)
 - [Page Operations](#page-operations)
 - [Utility](#utility)
@@ -217,6 +218,54 @@ Database object:
   }
 }
 ```
+
+---
+
+## List
+
+### ls
+
+List all pages and databases without requiring a search query. Useful for discovering content when you don't know what to search for.
+
+**Usage:**
+
+```bash
+notion ls [options]
+```
+
+**Options:**
+
+- `--type`: Filter by type (`page` or `database`)
+- `--limit`: Maximum results (default: 100)
+- `--json`: Output as JSON
+
+**Examples:**
+
+```bash
+notion ls
+notion ls --type page
+notion ls --type database --limit 50
+notion ls --json
+```
+
+**Returns:**
+
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "id": "abc123...",
+      "title": "Meeting Notes",
+      "type": "page",
+      "url": "https://notion.so/...",
+      "last_edited_time": "2024-03-20T14:30:00Z"
+    }
+  ]
+}
+```
+
+**Note:** If no results are found, ensure your Notion integration has been added to pages via Share → Add connections.
 
 ---
 
