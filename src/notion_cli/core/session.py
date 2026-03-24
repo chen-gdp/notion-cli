@@ -41,7 +41,7 @@ class NotionSession:
 
             # Create ultimate_notion config and set the token
             cfg = get_or_create_cfg()
-            cfg.token = token
+            cfg.ultimate_notion.token = token
             cls._instance = Session(cfg)
         return cls._instance
 
