@@ -9,6 +9,11 @@ import os
 from pathlib import Path
 from typing import Any
 
+from dotenv import load_dotenv
+
+# Load .env file if present
+load_dotenv()
+
 
 class Config:
     """Manages CLI configuration including authentication tokens.
