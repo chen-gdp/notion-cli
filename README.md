@@ -24,23 +24,39 @@ Or install with uv (recommended for development):
 uv pip install git+https://github.com/chen-gdp/notion-cli.git
 ```
 
-## OpenCode Skill Integration
+## OpenCode Skill Installation
 
-This CLI includes an OpenCode skill for AI agents. Install it globally to enable OpenCode to discover and use notion-cli commands:
+Enable OpenCode to discover and use notion-cli commands.
 
+### For Humans
+
+Copy and paste this prompt to your LLM agent (OpenCode, Claude Code, Cursor, etc.):
+
+> Install the notion-cli skill for me by cloning https://github.com/chen-gdp/notion-cli.git to ~/.config/opencode/skills/notion-cli
+
+Or do it manually:
 ```bash
-# Clone skill to OpenCode's global skills directory
 git clone git@github.com:chen-gdp/notion-cli.git ~/.config/opencode/skills/notion-cli
-
-# Verify installation
-opencode debug skill  # Should show "notion-cli" in available skills
 ```
 
-Then use it in OpenCode queries:
-```
-"Use notion-cli to search for my Tasks database"
-"Create a new page in Notion for meeting notes using notion-cli"
-```
+### For LLM Agents
+
+You are helping install the notion-cli skill for OpenCode.
+
+1. Clone the repository to the OpenCode skills directory:
+   ```bash
+   git clone git@github.com:chen-gdp/notion-cli.git ~/.config/opencode/skills/notion-cli
+   ```
+
+2. Verify the skill is installed:
+   ```bash
+   opencode debug skill | grep notion-cli
+   ```
+
+3. Report success to the user and suggest trying:
+   - `notion skills list` to see available commands
+   - `notion search "Tasks" --type database` to find their tasks database
+   - `notion auth setup` if they haven't configured their Notion token yet
 
 ## Quick Start
 
