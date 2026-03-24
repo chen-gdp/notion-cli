@@ -24,6 +24,24 @@ Or install with uv (recommended for development):
 uv pip install git+https://github.com/chen-gdp/notion-cli.git
 ```
 
+## OpenCode Skill Integration
+
+This CLI includes an OpenCode skill for AI agents. Install it globally to enable OpenCode to discover and use notion-cli commands:
+
+```bash
+# Clone skill to OpenCode's global skills directory
+git clone git@github.com:chen-gdp/notion-cli.git ~/.config/opencode/skills/notion-cli
+
+# Verify installation
+opencode debug skill  # Should show "notion-cli" in available skills
+```
+
+Then use it in OpenCode queries:
+```
+"Use notion-cli to search for my Tasks database"
+"Create a new page in Notion for meeting notes using notion-cli"
+```
+
 ## Quick Start
 
 ### 1. Authenticate
