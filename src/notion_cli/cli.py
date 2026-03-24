@@ -56,16 +56,25 @@ def ls_cmd(
 
         raw_results = raw_results[:limit]
 
-        formatted = [
-            {
-                "id": str(r.id),
-                "title": r.title,
-                "type": r.object,
-                "url": r.url,
-                "last_edited_time": r.last_edited_time.isoformat() if r.last_edited_time else None,
-            }
-            for r in raw_results
-        ]
+        formatted = []
+        for r in raw_results:
+            # Determine type using is_page/is_db properties
+            if hasattr(r, "is_page") and r.is_page:
+                obj_type = "page"
+            elif hasattr(r, "is_db") and r.is_db:
+                obj_type = "database"
+            else:
+                obj_type = "unknown"
+
+            formatted.append(
+                {
+                    "id": str(r.id),
+                    "title": r.title,
+                    "type": obj_type,
+                    "url": r.url,
+                    "last_edited_time": r.last_edited_time.isoformat() if r.last_edited_time else None,
+                }
+            )
 
         if json:
             output_json(formatted)

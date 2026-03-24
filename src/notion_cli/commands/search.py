@@ -12,12 +12,12 @@ app = typer.Typer()
 
 @app.command()
 def search(
-    query: str = typer.Argument(..., help="Search query"),
+    query: str = typer.Argument(..., help="Search query (matches titles only, not content)"),
     type: str | None = typer.Option(None, "--type", help="Filter by type: page or database"),
     limit: int = typer.Option(100, "--limit", help="Maximum results"),
     json: bool = typer.Option(False, "--json", help="Output as JSON"),
 ):
-    """Search for pages and databases in Notion."""
+    """Search for pages and databases by title. Note: Searches titles only, not page content/body."""
     try:
         session = get_session()
 
@@ -36,16 +36,25 @@ def search(
         raw_results = raw_results[:limit]
 
         # Format output
-        formatted = [
-            {
-                "id": str(r.id),
-                "title": r.title,
-                "type": r.object,
-                "url": r.url,
-                "last_edited_time": r.last_edited_time.isoformat() if r.last_edited_time else None,
-            }
-            for r in raw_results
-        ]
+        formatted = []
+        for r in raw_results:
+            # Determine type using is_page/is_db properties
+            if hasattr(r, "is_page") and r.is_page:
+                obj_type = "page"
+            elif hasattr(r, "is_db") and r.is_db:
+                obj_type = "database"
+            else:
+                obj_type = "unknown"
+
+            formatted.append(
+                {
+                    "id": str(r.id),
+                    "title": r.title,
+                    "type": obj_type,
+                    "url": r.url,
+                    "last_edited_time": r.last_edited_time.isoformat() if r.last_edited_time else None,
+                }
+            )
 
         if json:
             output_json(formatted)
