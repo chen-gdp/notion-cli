@@ -73,39 +73,46 @@ Copy and paste this prompt to your LLM agent (OpenCode, Claude Code, Cursor, etc
 
 ### For LLM Agents
 
-**Method 1: Use the interactive setup wizard (recommended)**
+You are helping install the notion-cli skill for OpenCode.
 
-Run the setup wizard for the user - it will install notion-cli, set up authentication, and optionally install the OpenCode skill:
+**Step 1: Install the CLI**
 ```bash
-curl -fsSL https://raw.githubusercontent.com/chen-gdp/notion-cli/main/setup.sh | bash
+pip install notion-cli
 ```
 
-**Method 2: Manual installation**
+**Step 2: Check if user already has a Notion token configured**
+```bash
+notion auth status --json
+```
 
-1. Clone the repository to the OpenCode skills directory:
-   ```bash
-   git clone git@github.com:chen-gdp/notion-cli.git ~/.config/opencode/skills/notion-cli
-   ```
+**Step 3a: If authenticated, install the OpenCode skill**
+```bash
+git clone https://github.com/chen-gdp/notion-cli.git ~/.config/opencode/skills/notion-cli
+```
 
-2. Install the CLI:
-   ```bash
-   pip install notion-cli
-   ```
+**Step 3b: If NOT authenticated, ask user for their Notion token**
 
-3. Set up authentication (if not already done):
-   ```bash
-   notion auth setup
-   ```
+Tell the user:
+> To use notion-cli, I need your Notion integration token. You can get one at https://www.notion.so/my-integrations → New integration → Copy token.
+> 
+> Please paste your token here.
 
-4. Verify the skill is installed:
-   ```bash
-   opencode debug skill | grep notion-cli
-   ```
+Once they provide the token (starts with `secret_`), run:
+```bash
+notion auth setup --token "SECRET_TOKEN_FROM_USER"
+git clone https://github.com/chen-gdp/notion-cli.git ~/.config/opencode/skills/notion-cli
+```
 
-5. Report success to the user and suggest trying:
-   - `notion skills list` to see available commands
-   - `notion search "Tasks" --type database` to find their tasks database
-   - `notion auth setup` if they haven't configured their Notion token yet
+**Step 4: Verify installation**
+```bash
+notion auth status --json
+opencode debug skill | grep notion-cli
+```
+
+**Step 5: Report success and suggest trying:**
+- `notion skills list` - See all available commands
+- `notion search "Tasks" --type database` - Find their tasks database
+- `notion search "meeting" --json` - Search their workspace
 
 ## Quick Start
 
