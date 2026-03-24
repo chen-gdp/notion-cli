@@ -15,19 +15,30 @@ console = Console()
 app = typer.Typer()
 
 
+def _validate_token(token: str) -> bool:
+    return token.startswith("secret_") or token.startswith("ntn_")
+
+
+def _save_token(token: str) -> None:
+    """Save token to config."""
+    config = get_config()
+    config.set_token(token)
+
+
 @app.command("setup")
 def auth_setup(
     token: str | None = typer.Option(None, "--token", help="Notion integration token (for non-interactive setup)"),
 ):
     """Set up Notion authentication."""
+    config = get_config()
+
     if token:
         # Non-interactive mode (for automation/CI)
-        if not token.startswith("secret_"):
-            output_error("INVALID_TOKEN", "Token must start with 'secret_'")
+        if not _validate_token(token):
+            output_error("INVALID_TOKEN", "Token must start with 'secret_' or 'ntn_'")
             raise typer.Exit(1)
 
-        config = get_config()
-        config.set_token(token)
+        _save_token(token)
         console.print("[green]✓ Token saved successfully![/green]")
         console.print(f"Config file: {config.get_config_path()}")
     else:
@@ -52,12 +63,11 @@ def auth_setup(
             output_error("INVALID_INPUT", "Token cannot be empty")
             return
 
-        if not token.startswith("secret_"):
-            output_error("INVALID_TOKEN", "Token must start with 'secret_'")
+        if not _validate_token(token):
+            output_error("INVALID_TOKEN", "Token must start with 'secret_' or 'ntn_'")
             return
 
-        config = get_config()
-        config.set_token(token)
+        _save_token(token)
 
         console.print("\n[green]✓ Token saved successfully![/green]")
         console.print(f"Config file: {config.get_config_path()}")
