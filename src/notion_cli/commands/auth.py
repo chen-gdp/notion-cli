@@ -16,37 +16,51 @@ app = typer.Typer()
 
 
 @app.command("setup")
-def auth_setup():
+def auth_setup(
+    token: str | None = typer.Option(None, "--token", help="Notion integration token (for non-interactive setup)"),
+):
     """Set up Notion authentication."""
-    console.print(
-        Panel.fit(
-            "[bold blue]Notion CLI Authentication[/bold blue]\n\n"
-            "To use this CLI, you need a Notion integration token.\n"
-            "1. Go to https://www.notion.so/my-integrations\n"
-            "2. Click 'New integration'\n"
-            "3. Give it a name (e.g., 'Notion CLI')\n"
-            "4. Copy the 'Internal Integration Token'\n"
-            "5. Paste it below",
-            title="Setup",
-            border_style="blue",
+    if token:
+        # Non-interactive mode (for automation/CI)
+        if not token.startswith("secret_"):
+            output_error("INVALID_TOKEN", "Token must start with 'secret_'")
+            raise typer.Exit(1)
+
+        config = get_config()
+        config.set_token(token)
+        console.print("[green]✓ Token saved successfully![/green]")
+        console.print(f"Config file: {config.get_config_path()}")
+    else:
+        # Interactive mode
+        console.print(
+            Panel.fit(
+                "[bold blue]Notion CLI Authentication[/bold blue]\n\n"
+                "To use this CLI, you need a Notion integration token.\n"
+                "1. Go to https://www.notion.so/my-integrations\n"
+                "2. Click 'New integration'\n"
+                "3. Give it a name (e.g., 'Notion CLI')\n"
+                "4. Copy the 'Internal Integration Token'\n"
+                "5. Paste it below",
+                title="Setup",
+                border_style="blue",
+            )
         )
-    )
 
-    token = Prompt.ask("Enter your Notion token", password=True)
+        token = Prompt.ask("Enter your Notion token", password=True)
 
-    if not token:
-        output_error("INVALID_INPUT", "Token cannot be empty")
-        return
+        if not token:
+            output_error("INVALID_INPUT", "Token cannot be empty")
+            return
 
-    if not token.startswith("secret_"):
-        output_error("INVALID_TOKEN", "Token must start with 'secret_'")
-        return
+        if not token.startswith("secret_"):
+            output_error("INVALID_TOKEN", "Token must start with 'secret_'")
+            return
 
-    config = get_config()
-    config.set_token(token)
+        config = get_config()
+        config.set_token(token)
 
-    console.print("\n[green]✓ Token saved successfully![/green]")
-    console.print(f"Config file: {config.get_config_path()}")
+        console.print("\n[green]✓ Token saved successfully![/green]")
+        console.print(f"Config file: {config.get_config_path()}")
 
 
 @app.command("status")
